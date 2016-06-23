@@ -8,14 +8,14 @@ var levelOne = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,0,0,1,
 				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,1,
 				1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,];
 
 // key to above grid
@@ -32,25 +32,11 @@ function preload() {
 function create() {
 	//physics engine has basic collisions but may be good enough.  Less overhead than others
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    // render background
-	game.add.sprite(0,0,'sky');
 
-	// draw obstacles based on level Array
-    generateLevelFromArray(levelOne);
-
-    // bring in the player
-	player = game.add.sprite(32, game.world.height - 150, 'dude');
-
-	// enable physics on the player
-	game.physics.arcade.enable(player);
-    player.body.collideWorldBounds = true;
-
-	// add which frames are for each motion
-	player.animations.add('left', [0, 1, 2, 3], 10, true);
-    player.animations.add('right', [5, 6, 7, 8], 10, true);
-
-	// use keyboard for game controls
+    // setup keyboard for game controls
     cursors = game.input.keyboard.createCursorKeys();
+
+    drawEntireGame(levelOne);
 }
 
 function update() {
@@ -58,11 +44,17 @@ function update() {
 	// collide the player with obstacles
     game.physics.arcade.collide(player, obstacles);
 
-    // reset player movement on each update otherwise he kinda ice skates after key releaed
+    movementControls();
+
+}
+
+function movementControls() {
+
+	// reset player movement on each update otherwise he kinda ice skates after key releaed
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
 
-    if (cursors.left.isDown) {
+	if (cursors.left.isDown) {
 
         player.body.velocity.x = -150;
         player.animations.play('left');
@@ -93,7 +85,20 @@ function update() {
 
 }
 
-function generateLevelFromArray(levelArray) {
+function drawEntireGame(levelArray) {
+
+	// render background
+	game.add.sprite(0,0,'sky');
+
+	// draw obstacles based on level Array
+	generateObstaclesFromArray(levelArray);
+
+	// draw player somewhere, maybe later throw him into number array and draw then
+	drawPlayer(200, 200, 'dude');
+}
+
+function generateObstaclesFromArray(levelArray, isGroup) {
+
 	var height = game.world.height;
 	var width = game.world.width;
 	// the tiles Im using are 40x40
@@ -131,15 +136,35 @@ function generateLevelFromArray(levelArray) {
 
 				var obstacle = obstacles.create(tileWidth*currentCol, currentRow*tileHeight, whatToDraw);
 				obstacle.body.immovable = true;
-			}
-		}
+			} // end check if value > 0
+		} // end loop through current rows columns
 		currentCol = 0;
-	}
-}
+	} // end iterating over all rows
+} // end generate obstacles function
 
 // this function converts whatever col/row combo we're at into an index in the level array
 function getArrayIndexFromColRow(totalCols, currentCol, currentRow) {
 	return currentCol + totalCols * currentRow;
+}
+
+function drawPlayer(x, y, name) {
+
+	// if we already have a player, kill it
+	if (player) {
+		player.kill();
+	}
+
+	// bring in the player
+	player = game.add.sprite(x, y, name);
+
+	// enable physics on the player
+	game.physics.arcade.enable(player);
+    player.body.collideWorldBounds = true;
+
+    // add which frames are for each motion
+	player.animations.add('left', [0, 1, 2, 3], 10, true);
+    player.animations.add('right', [5, 6, 7, 8], 10, true);
+
 }
 
 
