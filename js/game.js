@@ -26,7 +26,8 @@ function preload() {
 	game.load.image('sky', 'images/sky.png');
     game.load.image('wall', 'images/wall.png');
     game.load.image('trees', 'images/trees.png');
-    game.load.spritesheet('dude', 'images/dude.png', 32, 48);
+    // game.load.spritesheet('dude', 'images/dude.png', 32, 48);
+    game.load.spritesheet('ninja', 'images/ninja.png', 30, 20, -1, 7, 10);
 }
 
 function create() {
@@ -67,20 +68,17 @@ function movementControls() {
     }  else if (cursors.up.isDown) {
 
         player.body.velocity.y = -150;
-        player.frame = 4;
+        player.frame = 0;
 
     } else if (cursors.down.isDown) {
 
         player.body.velocity.y = 150;
-        player.frame = 4;
+        player.frame = 0;
 
     } else {
-    	// standing still, so stop any animations going on
-    	player.animations.stop();
 
-    	// for now set him back to a static frame 4, later base it off which direction he
-    	// was moving when btn was released
-        player.frame = 4;
+        player.animations.play('still');
+
     }
 
 }
@@ -94,7 +92,7 @@ function drawEntireGame(levelArray) {
 	generateObstaclesFromArray(levelArray);
 
 	// draw player somewhere, maybe later throw him into number array and draw then
-	drawPlayer(200, 200, 'dude');
+	drawPlayer(200, 200, 'ninja');
 }
 
 function generateObstaclesFromArray(levelArray, isGroup) {
@@ -163,7 +161,10 @@ function drawPlayer(x, y, name) {
 
     // add which frames are for each motion
 	player.animations.add('left', [0, 1, 2, 3], 10, true);
-    player.animations.add('right', [5, 6, 7, 8], 10, true);
+    player.animations.add('right', [0, 1, 2, 3], 10, true);
+    player.animations.add('still', [0, 6, 12, 18], 10, true);
+
+    player.scale.setTo(3,3);
 
 }
 
