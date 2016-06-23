@@ -2,32 +2,41 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create
 
 var cursors, player;
 
+var levelOne = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+				1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,];
+
+// key to above grid
+var gameWall = 1;
+var gameTrees = 2;
+
 function preload() {
 	game.load.image('sky', 'images/sky.png');
-    game.load.image('obstacle', 'images/obstacle.png');
+    game.load.image('wall', 'images/wall.png');
+    game.load.image('trees', 'images/trees.png');
     game.load.spritesheet('dude', 'images/dude.png', 32, 48);
 }
 
 function create() {
-
 	//physics engine has basic collisions but may be good enough.  Less overhead than others
     game.physics.startSystem(Phaser.Physics.ARCADE);
-
     // render background
 	game.add.sprite(0,0,'sky');
 
-	//create a group that can modified all together
-	obstacles = game.add.group();
-	// enable physics for anything created in this group
-    obstacles.enableBody = true;
-
-    var greenObstacle1 = obstacles.create(400, 400, 'obstacle');
-    var greenObstacle2 = obstacles.create(-150, 250, 'obstacle');
-
-    // without immovable things bounce in opposite directions when they collide
-    greenObstacle1.body.immovable = true;
-    greenObstacle2.body.immovable = true;
-
+	// draw obstacles based on level Array
+    generateLevelFromArray(levelOne);
 
     // bring in the player
 	player = game.add.sprite(32, game.world.height - 150, 'dude');
@@ -82,7 +91,55 @@ function update() {
         player.frame = 4;
     }
 
+}
 
+function generateLevelFromArray(levelArray) {
+	var height = game.world.height;
+	var width = game.world.width;
+	// the tiles Im using are 40x40
+	var tileWidth = 40;
+	var tileHeight = 40;
+
+	var numRows = height/tileHeight;
+	var numCols = width/tileWidth;
+
+	//create a group that can modified all together
+	obstacles = game.add.group();
+	// enable physics for anything created in this group
+    obstacles.enableBody = true;
+
+    /*
+	    Ok, so basically we divide the canvas into how many rows and colums it would take to fill it
+	    based on the dimensions of the tile.  Then we iterate over each row, generating a obstacle tile
+	    for each column position if applicable.  Then like a typewriter, we go back to the far left 
+	    of the canvas after we reach the right side by setting currentCol back to 0, and begin drawing
+	    for the next row.  Repeat until no rows left.
+	*/
+    for (var currentRow = 0; currentRow < numRows; currentRow++) {
+		for (var currentCol = 0; currentCol < numCols; currentCol++) {
+
+			var overallIndex = getArrayIndexFromColRow(numCols, currentCol, currentRow);
+			var valueAtIndex = levelArray[overallIndex];
+			var whatToDraw;
+
+			if (valueAtIndex) {
+				if (valueAtIndex === gameWall) {
+					whatToDraw = 'wall';
+				} else if (valueAtIndex === gameTrees) {
+					whatToDraw = 'trees';
+				}
+
+				var obstacle = obstacles.create(tileWidth*currentCol, currentRow*tileHeight, whatToDraw);
+				obstacle.body.immovable = true;
+			}
+		}
+		currentCol = 0;
+	}
+}
+
+// this function converts whatever col/row combo we're at into an index in the level array
+function getArrayIndexFromColRow(totalCols, currentCol, currentRow) {
+	return currentCol + totalCols * currentRow;
 }
 
 
