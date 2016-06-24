@@ -7,6 +7,8 @@
 ##### Map
 Going to design a proof of concept map in tiled
 
+Map should be a large, scrolling map.  i.e. camera should follow player.  Game Field is 800x600 at the moment, so map should be at least double that, probably larger even.
+
 ##### Characters/assets
 1 main character - Ninja Skin
 2-5 NPCs
