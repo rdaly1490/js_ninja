@@ -22,8 +22,12 @@ var levelOne = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 var gameWall = 1;
 var gameTrees = 2;
 
+var map, layer;
+
 function preload() {
-	game.load.image('sky', 'images/sky.png');
+	// game.load.image('sky', 'images/sky.png');
+	game.load.tilemap('level1', 'maps/map1.json', null, Phaser.Tilemap.TILED_JSON);
+	game.load.image('ground-tiles', 'maps/map1.png');
     game.load.image('wall', 'images/wall.png');
     game.load.image('trees', 'images/trees.png');
     // game.load.spritesheet('dude', 'images/dude.png', 32, 48);
@@ -34,6 +38,14 @@ function create() {
 	//physics engine has basic collisions but may be good enough.  Less overhead than others
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
+	map = game.add.tilemap('level1');
+	map.addTilesetImage('ground-tiles');
+
+	map.setCollisionByExclusion([ 13, 14, 15, 16, 46, 47, 48, 49, 50, 51 ]);
+
+	layer = map.createLayer('Tile Layer 1');
+	layer.resizeWorld();
+
     // setup keyboard for game controls
     cursors = game.input.keyboard.createCursorKeys();
 
@@ -41,9 +53,10 @@ function create() {
 }
 
 function update() {
+	game.physics.arcade.collide(player, layer);
 
 	// collide the player with obstacles
-    game.physics.arcade.collide(player, obstacles);
+    // game.physics.arcade.collide(player, obstacles);
 
     movementControls();
 
@@ -86,13 +99,13 @@ function movementControls() {
 function drawEntireGame(levelArray) {
 
 	// render background
-	game.add.sprite(0,0,'sky');
+	// game.add.sprite(0,0,'sky');
 
 	// draw obstacles based on level Array
-	generateObstaclesFromArray(levelArray);
+	// generateObstaclesFromArray(levelArray);
 
 	// draw player somewhere, maybe later throw him into number array and draw then
-	drawPlayer(200, 200, 'ninja');
+	drawPlayer(100, 100, 'ninja');
 }
 
 function generateObstaclesFromArray(levelArray, isGroup) {
