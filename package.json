@@ -1,0 +1,33 @@
+{
+  "name": "js_ninja",
+  "version": "1.0.0",
+  "description": "a game to learn coding foo!",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rdaly1490/js_ninja.git"
+  },
+  "keywords": [
+    "javascript"
+  ],
+  "author": "Rob Daly, et al",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rdaly1490/js_ninja/issues"
+  },
+  "homepage": "https://github.com/rdaly1490/js_ninja#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-nodemon": "^2.2.1",
+    "gulp-sass": "^2.3.2"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "morgan": "^1.7.0",
+    "phaser": "^2.6.2"
+  }
+}
