@@ -23,10 +23,12 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-nodemon": "^2.2.1",
+    "gulp-plumber": "^1.1.0",
     "gulp-sass": "^2.3.2"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
+    "express": "^4.16.2",
     "morgan": "^1.7.0",
     "phaser": "^2.6.2"
   }
